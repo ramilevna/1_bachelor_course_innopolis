@@ -1,0 +1,122 @@
+// Renata Latypova
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String[] str = scanner.nextLine().split(" ");
+        ArrayStack operators = new ArrayStack();
+        String yardOutput = "";
+        for (int i = 0; i < str.length; i++) {
+            try {
+                int check = Integer.parseInt(str[i]);
+                yardOutput += str[i] + " ";
+            } catch (NumberFormatException e) {
+                if (str[i].equals("min") || str[i].equals("max")) {
+                    operators.push(str[i]);
+                } else if (str[i].equals(",")) {
+                    while (!operators.peek().equals("(")) {
+                        yardOutput += operators.peek() + " ";
+                        operators.pop();
+                    }
+                } else if (str[i].equals("*") || str[i].equals("/")) {
+                    while (!operators.isEmpty() && ((operators.peek().equals("*") || operators.peek().equals("/") ||
+                            operators.peek().equals("min") || operators.peek().equals("max")))) {
+                        yardOutput += operators.peek() + " ";
+                        operators.pop();
+                    }
+                    operators.push(str[i]);
+                } else if (str[i].equals("+") || str[i].equals("-")) {
+                    while (!operators.isEmpty() && !operators.peek().equals("(")) {
+                        yardOutput += operators.peek() + " ";
+                        operators.pop();
+                    }
+                    operators.push(str[i]);
+                } else if (str[i].equals("(")) {
+                    operators.push(str[i]);
+                } else if (str[i].equals(")")) {
+                    while (!operators.peek().equals("(")) {
+                        yardOutput += operators.peek() + " ";
+                        operators.pop();
+                    }
+                    operators.pop();
+                    if (!operators.isEmpty()) {
+                        if (operators.peek().equals("min") || operators.peek().equals("max")) {
+                            yardOutput += operators.peek() + " ";
+                            operators.pop();
+                        }
+                    }
+                }
+            }
+        }
+        while (!operators.isEmpty()){
+            yardOutput += operators.peek() + " ";
+            operators.pop();
+        }
+        ArrayStack<Integer> numbers = new ArrayStack<>();
+        String[] yardInput = yardOutput.split(" ");
+        for (int i = 0; i < yardInput.length; i++) {
+            try {
+                numbers.push(Integer.parseInt(yardInput[i]));
+            } catch (NumberFormatException e) {
+                int a = numbers.peek();
+                numbers.pop();
+                int b = numbers.peek();
+                numbers.pop();
+                if (yardInput[i].equals("-")) {
+                    numbers.push(b - a);
+                } else if (yardInput[i].equals("+")) {
+                    numbers.push(a + b);
+                } else if (yardInput[i].equals("*")) {
+                    numbers.push(a * b);
+                } else if (yardInput[i].equals("/")) {
+                    numbers.push(b / a);
+                } else if (yardInput[i].equals("min")) {
+                    if (a < b) {
+                        numbers.push(a);
+                    } else {
+                        numbers.push(b);
+                    }
+                } else if (yardInput[i].equals("max")) {
+                    if (a > b) {
+                        numbers.push(a);
+                    } else {
+                        numbers.push(b);
+                    }
+                }
+            }
+        }
+        System.out.println(numbers.peek());
+    }
+}
+interface Stack<T> {
+    void pop();
+    T peek();
+    void push(T e);
+    boolean isEmpty();
+    int size();
+}
+class ArrayStack <T> implements Stack<T>{
+    ArrayList<T> operators;
+    public ArrayStack (){
+        operators = new ArrayList<T>();
+    }
+    public void push(T e){
+        operators.add(e);
+    }
+    public void pop(){
+        if (operators.isEmpty()) throw new Error("Cannot pop empty stack");
+        else { operators.remove(operators.size() - 1); }
+    }
+    public T peek(){
+        if (operators.isEmpty()) throw new Error("Cannot peek empty stack");
+        return operators.get(operators.size() - 1);
+    }
+    public int size(){
+        return operators.size();
+    }
+    public boolean isEmpty(){
+        return operators.isEmpty();
+    }
+}
