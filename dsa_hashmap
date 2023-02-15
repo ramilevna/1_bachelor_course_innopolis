@@ -1,0 +1,107 @@
+// Renata Latypova
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = Integer.parseInt(scanner.nextLine());
+        Map<String, Integer> map = new HashMap<>(n);
+        List<String> words = new ArrayList<>();
+        int k = 0;
+        for (int i = 0; i < n; i++) {
+            map.put(scanner.next(), 1);
+        }
+        int m = scanner.nextInt();
+        for (int i = 0; i < m; i++) {
+            String str = scanner.next();
+            if (map.get(str) == null) {
+                k++;
+                words.add(str);
+                map.put(str, 1);
+            }
+        }
+        System.out.println(k);
+        for (int i = 0; i < k; i++) {
+            System.out.println(words.get(i));
+        }
+    }
+}
+interface Map<K,V> {
+    V get(K key);
+    void put(K key, V value);
+    void remove(K key);
+    int size();
+    boolean isEmpty();
+}
+
+class KeyValuePair<K, V> {
+    K key;
+    V value;
+
+    public KeyValuePair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+}
+
+
+class HashMap<K, V> implements Map<K, V> {
+    List<KeyValuePair<K, V>>[] hashTable;
+    int capacity;
+    int numberOfElements;
+
+
+    public HashMap(int capacity) {
+        this.capacity = capacity;
+        this.numberOfElements = 0;
+        this.hashTable = new List[capacity];
+        for (int i = 0; i < capacity; i++)
+            this.hashTable[i] = new LinkedList<>();
+    }
+
+    @Override
+    public V get(K key) {
+        int i = Math.abs(key.hashCode()) % this.capacity;
+        for (KeyValuePair<K,V> kv : this.hashTable[i]) {
+            if (kv.key.equals(key))
+                return kv.value;
+        }
+        return null;
+    }
+
+    @Override
+    public int size() { return this.numberOfElements; }
+
+    @Override
+    public boolean isEmpty() { return (this.numberOfElements == 0); }
+
+    @Override
+    public void remove(K key){
+        int i = Math.abs(key.hashCode()) % this.capacity;
+        for (KeyValuePair<K,V> kv : this.hashTable[i]) {
+            if (kv.key.equals(key)) {
+                this.hashTable[i].remove(kv);
+                --this.numberOfElements;
+            }
+        }
+    }
+
+    @Override
+    public void put(K key, V value) {
+        int i = Math.abs(key.hashCode()) % this.capacity;
+        for (KeyValuePair<K,V> kv : this.hashTable[i]) {
+            if (kv.key.equals(key)){
+                kv.value = value;
+                return;
+            }
+        }
+        this.hashTable[i].add(
+                new KeyValuePair(key, value)
+        );
+        ++this.numberOfElements;
+    }
+}
