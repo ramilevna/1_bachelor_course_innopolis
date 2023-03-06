@@ -1,0 +1,58 @@
+//Renata Latypova
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector <pair<int, int>> items;
+    int W;
+    cin >> W;
+    int weight[n];
+    int cost[n];
+    for (int i = 0; i < n; i++) {
+        cin >> weight[i];
+    }
+    for (int i = 0; i < n; i++) {
+        cin >> cost[i];
+    }
+    for (int i = 0;i < n; i++) {
+        items.push_back(make_pair(weight[i], cost[i]));
+    }
+    vector<vector<int>> dp (n + 1, vector<int>(W + 1, 0));
+    for (int i = 0; i < W + 1; i++) {
+        dp[0][i] = 0;
+    }
+    for (int i = 1; i < n + 1; i++) {
+        for (int w = 1; w < W + 1; w++) {
+            if (items[i - 1].first > w) {
+                dp[i][w] = dp[i - 1][w];
+            } else {
+                dp[i][w] = max(dp[i - 1][w], items[i - 1].second + dp[i - 1][w - items[i - 1].first]);
+            }
+        }
+    }
+    int i = n;
+    int j = W;
+    vector<int> answer;
+    int counter = n;
+    while (dp[i][j] != 0) {
+        if (dp[i-1][j] == dp[i][j]) {
+            i--;
+            counter--;
+        }
+        else {
+            j = j - weight[i - 1];
+            answer.push_back(counter);
+            i--;
+            counter--;
+        }
+    }
+    cout << answer.size() << endl;
+    for (int i = answer.size() - 1; i >= 0; i--) {
+        cout << answer[i] << " ";
+    }
+    return 0;
+}
