@@ -1,0 +1,164 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+ifstream in("input.txt");
+ofstream out ("output.txt");
+
+class Matrix
+{
+private:
+    int m;
+    int n;
+public:
+    int** matrix;
+    Matrix(int m, int n)
+    {
+        this->m = m;
+        this->n = n;
+        matrix = new int* [m];
+        for (int i = 0; i < m; i++)
+            matrix[i] = new int[n];
+    }
+    void set()
+    {
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                in >> matrix[i][j];
+    }
+    int getM()
+    {
+        return m;
+    };
+    int getN()
+    {
+        return n;
+    };
+    void print()
+    {
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (j == n - 1) out << matrix[i][j];
+                else out << matrix[i][j] << " ";
+            }
+            out << endl;
+        }
+    }
+    friend int** operator + (Matrix& a, Matrix& b)
+    {
+        int answerM = a.getM();
+        int answerN = b.getN();
+        Matrix answer(answerM, answerN);
+        for (int i = 0; i < answerM; i++)
+        {
+            for (int j = 0; j < answerN; j++)
+            {
+                answer.matrix[i][j] = a.matrix[i][j] + b.matrix[i][j];
+            }
+        }
+        return answer.matrix;
+    }
+    friend int** operator - (Matrix& a, Matrix& b)
+    {
+        int answerM = a.getM();
+        int answerN = b.getN();
+        Matrix answer(answerM, answerN);
+        for (int i = 0; i < answerM; i++)
+        {
+            for (int j = 0; j < answerN; j++)
+            {
+                answer.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
+            }
+        }
+        return answer.matrix;
+    }
+    friend int** operator * (Matrix& a, Matrix& b)
+    {
+        int answerM = a.getM();
+        int answerN = b.getN();
+        int help = a.getN();
+        Matrix answer(answerM, answerN);
+        for(int i = 0; i < answerM; i++)
+            for(int j = 0; j < answerN; j++) {
+                answer.matrix[i][j] = 0;
+                for (int k = 0; k < help; ++k) {
+                    answer.matrix[i][j] += (a.matrix[i][k] * b.matrix[k][j]);
+                }
+            }
+        return answer.matrix;
+    }
+    int** transpose(Matrix& a)
+    {
+        int answerN = a.getN();
+        int answerM = a.getM();
+        Matrix answer(answerN, answerM);
+        for (int i = 0; i < answerN; i++)
+        {
+            for (int j = 0; j < answerM; j++)
+            {
+                answer.matrix[i][j] = a.matrix[j][i];
+            }
+        }
+        return answer.matrix;
+    }
+    int** operator = (Matrix& b)
+    {
+        Matrix temp (b.m, b.n);
+        temp.matrix = b.matrix;
+        return temp.matrix;
+    }
+};
+
+ofstream& operator <<(ofstream& ostr, Matrix& m)
+{
+    m.print();
+    return (ostr);
+}
+
+ifstream& operator >>(ifstream& in, Matrix& m)
+{
+    m.set();
+    return (in);
+}
+
+int main() {
+    string strM, strN;
+    in >> strM >> strN;
+    int m = stoi(strM);
+    int n = stoi(strN);
+    Matrix a(m, n);
+    in >> a;
+    in >> strM >> strN;
+    m = stoi(strM);
+    n = stoi(strN);
+    Matrix b(m, n);
+    in >> b;
+    in >> strM >> strN;
+    m = stoi(strM);
+    n = stoi(strN);
+    Matrix c(m, n);
+    in >> c;
+    if (a.getN() == b.getN() && a.getM() == b.getM()) {
+        Matrix d(a.getM(), a.getN());
+        d.matrix = a + b;
+        out << d;
+        Matrix e(a.getM(), a.getN());
+        e.matrix = b - a;
+        out << e;
+    } else {
+        out << "Error: the dimensional problem occurred" << endl;
+        out << "Error: the dimensional problem occurred" << endl;
+    }
+    if (c.getN() == a.getM()) {
+        Matrix f(c.getM(), a.getN());
+        f.matrix = c * a;
+        out << f;
+    } else {
+        out << "Error: the dimensional problem occurred" << endl;
+    }
+    Matrix g(a.getN(), a.getM());
+    g.matrix = a.transpose(a);
+    out << g;
+}
