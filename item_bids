@@ -1,0 +1,64 @@
+// Renata Latypova
+import java.util.Scanner;
+public class weeklyA {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = Integer.parseInt(scanner.nextLine());
+        int[][] bids = new int[n][3];
+        for (int i = 0; i < n; i++) {
+            String[] str = scanner.nextLine().split(" ");
+            bids[i][0] = i + 1;
+            bids[i][1] = Integer.parseInt(str[0]);
+            bids[i][2] = Integer.parseInt(str[1]);
+        }
+        int[][] output = new int[n + 1][3];
+        int max = bids[0][2];
+        for (int i = 1; i < n; i++) {
+            if (bids[i][2] > max)
+                max = bids[i][2];
+        }
+        int[] count = new int[max + 1];
+        for (int i = 0; i < max; ++i) {
+            count[i] = 0;
+        }
+        for (int i = 0; i < n; i++) {
+            count[bids[i][2]]++;
+        }
+        for (int i = 1; i <= max; i++) {
+            count[i] += count[i - 1];
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            output[count[bids[i][2]] - 1] = bids[i];
+            count[bids[i][2]]--;
+        }
+        for (int i = 0; i < n; i++) {
+            bids[n - i - 1] = output[i];
+        }
+        int[][] output2 = new int[n + 1][3];
+        max = bids[0][1];
+        for (int i = 1; i < n; i++) {
+            if (bids[i][1] > max)
+                max = bids[i][1];
+        }
+        int[] count2 = new int[max + 1];
+        for (int i = 0; i < max; ++i) {
+            count2[i] = 0;
+        }
+        for (int i = 0; i < n; i++) {
+            count2[bids[i][1]]++;
+        }
+        for (int i = 1; i <= max; i++) {
+            count2[i] += count2[i - 1];
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            output2[count2[bids[i][1]] - 1] = bids[i];
+            count2[bids[i][1]]--;
+        }
+        for (int i = 0; i < n; i++) {
+            bids[i] = output2[i];
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            System.out.print(bids[i][0] + " ");
+        }
+    }
+}
