@@ -1,0 +1,90 @@
+// Renata Latypova
+// implementation from https://www.geeksforgeeks.org/introduction-to-binary-tree-data-structure-and-algorithm-tutorials/
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        BinaryTree tree = new BinaryTree();
+        Scanner scanner = new Scanner(System.in);
+        int n = Integer.parseInt(scanner.nextLine());
+        String[] str = scanner.nextLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            tree.addNode(Integer.parseInt(str[i]));
+        }
+        System.out.println(n);
+        tree.preOrderTraversal(tree.root);
+        tree.preOrderTraversalLeftRight(tree.root);
+        System.out.println(tree.root.index);
+    }
+}
+
+class Node {
+    int data, index;
+    Node left;
+    Node right;
+
+    public Node(int data) {
+        this.data = data;
+    }
+}
+
+class BinaryTree {
+    Node root;
+    int index = 1;
+
+    public void addNode(int data) {
+        Node newNode = new Node(data);
+
+        if (root == null) {
+            root = newNode;
+        } else {
+            Node focusNode = root;
+            Node parent;
+
+            while (true) {
+                parent = focusNode;
+
+                if (data < focusNode.data) {
+                    focusNode = focusNode.left;
+                    if (focusNode == null) {
+                        parent.left = newNode;
+                        return;
+                    }
+                } else {
+                    focusNode = focusNode.right;
+                    if (focusNode == null) {
+                        parent.right = newNode;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public void preOrderTraversal(Node focusNode) {
+        if (focusNode != null) {
+            focusNode.index = index++;
+            preOrderTraversal(focusNode.left);
+            preOrderTraversal(focusNode.right);
+        }
+    }
+
+    public void preOrderTraversalLeftRight(Node focusNode) {
+        if (focusNode != null) {
+            int l, r;
+            if (focusNode.left == null) {
+                l = -1;
+            } else {
+                l = focusNode.left.index;
+            }
+            if (focusNode.right == null) {
+                r = -1;
+            } else {
+                r = focusNode.right.index;
+            }
+            System.out.println(focusNode.data + " " + l + " " + r);
+            preOrderTraversalLeftRight(focusNode.left);
+            preOrderTraversalLeftRight(focusNode.right);
+        }
+    }
+}
