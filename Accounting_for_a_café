@@ -1,0 +1,126 @@
+// Renata Latypova
+// my implementation was inspired by Geeks for Geeks
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class taskB {
+    public static void main(String[] args) {
+        // the instance of scanner for reading from the console
+        Scanner scanner = new Scanner(System.in);
+        // reading from the console n and reformat it to integer number
+        int n = Integer.parseInt(scanner.nextLine());
+        // hashmap for keeping date and sum of costs
+        Map<String, Double> costs = new Map<>();
+        // hashmap for keeping date and unique receipts
+        Map <String, LinkedList<String>> UniqueReceipts = new Map<>();
+        // list for dates for convenient output
+        List<String> dates = new ArrayList<>();
+        // reading the data
+        for (int i = 0; i < n; i++) {
+            String[] str = scanner.nextLine().split(" ");
+            String data = str[0];
+            double cost = Double.parseDouble(str[3].substring(1));
+            String receipt = str[2];
+            // list for receipts
+            LinkedList<String> receipts = new LinkedList<>();
+            // if we haven't the date in hashmap we put it and its cost and receipt
+            if (costs.get(data) == null && UniqueReceipts.get(data) == null) {
+                receipts.add(receipt);
+                costs.insert(data, cost);
+                UniqueReceipts.insert(data, receipts);
+                dates.add(data);
+            } else {
+                // if we already have the date in hashmaps we update sum of costs and receipts(if new receipt is unique)
+                costs.insert(data, costs.get(data) + cost);
+                receipts = UniqueReceipts.get(data);
+                if (!receipts.contains(receipt)) {
+                    receipts.add(receipt);
+                    UniqueReceipts.insert(data, receipts);
+                }
+            }
+        }
+        // printing data
+        for (int i = 0; i < dates.size(); i++) {
+                System.out.println(dates.get(i) + " $" + costs.get(dates.get(i)) + " " + UniqueReceipts.get(dates.get(i)).size());
+        }
+    }
+}
+// Java program to implement Rehashing
+
+class Map<K, V> {
+    private int capacity; // The initial capacity of the hash table
+    private int size; // The number of key-value pairs in the hash map
+    private float loadFactor; // The load factor threshold for resizing
+    private Entry<K, V>[] table; // The hash table
+
+    static class Entry<K, V> {
+        K key;
+        V value;
+        Entry<K, V> next;
+        public Entry(K key, V value, Entry<K, V> next) {
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+    }
+    public Map(int initialCapacity, float loadFactor) {
+        this.capacity = initialCapacity;
+        this.size = 0;
+        this.loadFactor = loadFactor;
+        this.table = new Entry[capacity];
+    }
+    public Map() {
+        this(1, 0.75f); // Default capacity and load factor
+    }
+    // function to get an element from Map
+    public V get(K key) {
+        int index = getIndex(key);
+        Entry<K, V> entry = table[index];
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                return entry.value;
+            }
+            entry = entry.next;
+        }
+        return null;
+    }
+    // function to put an element to Map
+    public void insert(K key, V value) {
+        int index = getIndex(key);
+        Entry<K, V> entry = table[index];
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                entry.value = value;
+            }
+            entry = entry.next;
+        }
+        Entry<K, V> newEntry = new Entry<>(key, value, table[index]);
+        table[index] = newEntry;
+        size++;
+        if ((float) size / capacity >= loadFactor) {
+            resize();
+        }
+    }
+    // function to get index
+    private int getIndex(K key) {
+        int hash = key.hashCode();
+        return (hash & 0x7FFFFFFF) % capacity;
+    }
+    // function to rehash
+    private void resize() {
+        capacity = capacity * 2;
+        Entry<K, V>[] newTable = new Entry[capacity];
+        for (Entry<K, V> entry : table) {
+            while (entry != null) {
+                Entry<K, V> next = entry.next;
+                int index = getIndex(entry.key);
+                entry.next = newTable[index];
+                newTable[index] = entry;
+                entry = next;
+            }
+        }
+        table = newTable;
+    }
+}
