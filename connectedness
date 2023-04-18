@@ -1,0 +1,63 @@
+// Renata Latypova
+// implementation of dfs inspired by https://www.geeksforgeeks.org/implementation-of-dfs-using-adjacency-matrix/
+// implementation of graph inspired by https://www.programiz.com/dsa/graph-adjacency-matrix
+
+import java.util.Scanner;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = Integer.parseInt(scanner.nextLine());
+        boolean[] visited = new boolean[n];
+        Graph adj = new Graph(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (Integer.parseInt(scanner.next()) == 1) {
+                    adj.addEdge(i, j);
+                }
+            }
+        }
+        dfs(0, visited, adj);
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                System.out.println("NO");
+                System.exit(0);
+            }
+        }
+        System.out.println("YES");
+    }
+
+    static void dfs(int start, boolean[] visited, Graph adj) {
+        // Set current node as visited
+        visited[start] = true;
+
+        // For every node of the graph
+        for (int i = 0; i < adj.adjMatrix[start].length; i++) {
+
+            // If some node is adjacent to the current node, and it has not already been visited
+            if (adj.adjMatrix[start][i] == Integer.valueOf(1) && (!visited[i])) {
+                dfs(i, visited, adj);
+            }
+        }
+    }
+}
+
+// Adjacency Matrix implementation
+
+class Graph<T> {
+    T[][] adjMatrix;
+    private int numVertices;
+
+    // Initialize the matrix
+    public Graph(int numVertices) {
+        this.numVertices = numVertices;
+        adjMatrix = (T[][]) new Object[numVertices][numVertices];
+    }
+
+    // Add edges
+    public void addEdge(int i, int j) {
+        adjMatrix[i][j] = (T) Integer.valueOf(1);
+        adjMatrix[j][i] = (T) Integer.valueOf(1);
+    }
+}
