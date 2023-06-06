@@ -1,9 +1,9 @@
+// Renata Latypova
+// r.latypova@innopolis.university
 #include <iostream>
 #include <fstream>
 
 using namespace std;
-ifstream in("input.txt");
-ofstream out ("output.txt");
 
 class Matrix
 {
@@ -24,7 +24,7 @@ public:
     {
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
-                in >> matrix[i][j];
+                cin >> matrix[i][j];
     }
     int getM()
     {
@@ -40,10 +40,10 @@ public:
         {
             for (int j = 0; j < n; j++)
             {
-                if (j == n - 1) out << matrix[i][j];
-                else out << matrix[i][j] << " ";
+                if (j == n - 1) cout << matrix[i][j];
+                else cout << matrix[i][j] << " ";
             }
-            out << endl;
+            cout << endl;
         }
     }
     friend int** operator + (Matrix& a, Matrix& b)
@@ -111,13 +111,13 @@ public:
     }
 };
 
-ofstream& operator <<(ofstream& ostr, Matrix& m)
+ostream& operator <<(ostream& out, Matrix& m)
 {
     m.print();
-    return (ostr);
+    return (out);
 }
 
-ifstream& operator >>(ifstream& in, Matrix& m)
+istream& operator >>(istream& in, Matrix& m)
 {
     m.set();
     return (in);
@@ -125,40 +125,40 @@ ifstream& operator >>(ifstream& in, Matrix& m)
 
 int main() {
     string strM, strN;
-    in >> strM >> strN;
+    cin >> strM >> strN;
     int m = stoi(strM);
     int n = stoi(strN);
     Matrix a(m, n);
-    in >> a;
-    in >> strM >> strN;
+    cin >> a;
+    cin >> strM >> strN;
     m = stoi(strM);
     n = stoi(strN);
     Matrix b(m, n);
-    in >> b;
-    in >> strM >> strN;
+    cin >> b;
+    cin >> strM >> strN;
     m = stoi(strM);
     n = stoi(strN);
     Matrix c(m, n);
-    in >> c;
+    cin >> c;
     if (a.getN() == b.getN() && a.getM() == b.getM()) {
         Matrix d(a.getM(), a.getN());
         d.matrix = a + b;
-        out << d;
+        cout << d;
         Matrix e(a.getM(), a.getN());
         e.matrix = b - a;
-        out << e;
+        cout << e;
     } else {
-        out << "Error: the dimensional problem occurred" << endl;
-        out << "Error: the dimensional problem occurred" << endl;
+        cout << "Error: the dimensional problem occurred" << endl;
+        cout << "Error: the dimensional problem occurred" << endl;
     }
     if (c.getN() == a.getM()) {
         Matrix f(c.getM(), a.getN());
         f.matrix = c * a;
-        out << f;
+        cout << f;
     } else {
-        out << "Error: the dimensional problem occurred" << endl;
+        cout << "Error: the dimensional problem occurred" << endl;
     }
     Matrix g(a.getN(), a.getM());
     g.matrix = a.transpose(a);
-    out << g;
+    cout << g;
 }
